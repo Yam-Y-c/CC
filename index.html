@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>큐피드의 오판</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0d0d0f;--char:#16161a;--char2:#1f1f24;--line:#2a2a30;
+    --fog:#8a8a8f;--fog2:#56565c;--white:#e8e6e3;
+    --wine:#a01b35;--wine-deep:#6e1226;
+    --serif:'Nanum Myeongjo',serif;--sans:'Noto Sans KR',sans-serif;--mono:'JetBrains Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--ink);color:var(--white);font-family:var(--sans);font-weight:300;line-height:1.8;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  ::selection{background:var(--wine);color:var(--white)}
+
+  nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:center;background:rgba(13,13,15,.86);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  nav button{position:relative;background:none;border:none;cursor:pointer;color:var(--fog);font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;padding:1.15rem 1.6rem;transition:color .35s}
+  nav button::after{content:'';position:absolute;left:50%;bottom:.7rem;width:0;height:1px;background:var(--wine);transform:translateX(-50%);transition:width .35s}
+  nav button:hover{color:var(--white)}
+  nav button.active{color:var(--white)}
+  nav button.active::after{width:1.4rem}
+
+  main{max-width:1080px;margin:0 auto;padding:0 2rem}
+  .page{display:none;padding:8rem 0 5rem;animation:fade .55s ease}
+  .page.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+  .eyebrow{font-family:var(--mono);font-size:.7rem;letter-spacing:.32em;text-transform:uppercase;color:var(--wine);display:flex;align-items:center;gap:.9rem;margin-bottom:1.6rem}
+  .eyebrow::before{content:'';width:26px;height:1px;background:var(--wine)}
+  .sec-title{font-family:var(--serif);font-weight:800;font-size:clamp(2rem,5vw,3.2rem);line-height:1.18;letter-spacing:-.01em;margin-bottom:.5rem}
+  .sec-sub{font-family:var(--mono);font-size:.74rem;letter-spacing:.2em;color:var(--fog);text-transform:uppercase;margin-bottom:2.6rem}
+
+  .char-hero{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:3rem;align-items:start}
+  .portrait{position:relative;aspect-ratio:3/4;background:linear-gradient(160deg,var(--char2),var(--char));border:1px solid var(--line);overflow:hidden}
+  .portrait::after{content:'IMAGE';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.7rem;letter-spacing:.3em;color:var(--fog2)}
+  .portrait img{width:100%;height:100%;object-fit:cover;position:relative;z-index:2;display:block}
+  .portrait .frame-tag{position:absolute;z-index:3;top:.9rem;left:.9rem;font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;color:var(--fog);background:rgba(13,13,15,.6);padding:.2rem .5rem;border:1px solid var(--line)}
+  .char-name{font-family:var(--serif);font-weight:800;font-size:clamp(2.6rem,7vw,4.2rem);line-height:1;letter-spacing:-.02em}
+  .char-name .han{color:var(--fog);font-size:.4em;font-weight:400;letter-spacing:.05em}
+
+  .id-line{display:flex;gap:1.3rem;margin:1.8rem 0;align-items:stretch}
+  .id-line .bar{width:2px;background:var(--wine);flex:none}
+  .id-line .info{display:flex;flex-direction:column;justify-content:center;gap:.35rem}
+  .id-line .info span{font-size:1.05rem;color:var(--white);font-weight:400}
+  .id-line .info span .u{font-family:var(--mono);font-size:.7rem;color:var(--fog);letter-spacing:.1em;margin-left:.5rem}
+
+  .stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:1.8rem}
+  .stat{background:var(--char);padding:1rem 1.2rem}
+  .stat .k{font-family:var(--mono);font-size:.62rem;letter-spacing:.2em;color:var(--fog2);text-transform:uppercase}
+  .stat .v{font-size:.95rem;color:var(--white);margin-top:.25rem}
+
+  .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.8rem}
+  .tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.1em;color:var(--fog);border:1px solid var(--line);padding:.35rem .7rem}
+  .tag.w{color:var(--wine);border-color:var(--wine-deep)}
+
+  .block{margin-top:5rem}
+  .big-label{font-family:var(--serif);font-weight:800;font-size:clamp(1.8rem,4.5vw,2.8rem);letter-spacing:-.01em}
+  .big-label .sub{display:block;font-family:var(--mono);font-size:.72rem;font-weight:400;letter-spacing:.24em;color:var(--wine);text-transform:uppercase;margin-top:.7rem}
+  .duality-grid{display:grid;grid-template-columns:1fr 1px 1fr;gap:0;margin-top:2rem;border:1px solid var(--line)}
+  .duality-col{padding:2rem 1.8rem}
+  .duality-col h4{font-family:var(--mono);font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:1rem}
+  .duality-col.sanctuary h4{color:var(--white)}
+  .duality-col.sanctuary h4::before{content:'◖ ';color:var(--wine)}
+  .duality-col.void h4{color:var(--fog)}
+  .duality-col.void h4::before{content:'◗ ';color:var(--fog2)}
+  .duality-col p{font-size:.92rem;color:var(--fog)}
+  .duality-col.sanctuary p{color:var(--white)}
+  .divider-v{background:var(--line)}
+  .duality-col.void{background:repeating-linear-gradient(45deg,transparent,transparent 9px,rgba(255,255,255,.012) 9px,rgba(255,255,255,.012) 10px)}
+
+  .ld-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem}
+  .ld{border:1px solid var(--line);background:var(--char);padding:1.8rem}
+  .ld h4{font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;margin-bottom:1.2rem}
+  .ld.likes h4{color:var(--wine)}
+  .ld.likes h4::before{content:'+ '}
+  .ld.dislikes h4{color:var(--fog)}
+  .ld.dislikes h4::before{content:'− '}
+  .ld ul{list-style:none}
+  .ld li{font-size:.92rem;color:var(--fog);padding:.5rem 0;border-top:1px solid var(--line)}
+  .ld li:first-child{border-top:none}
+  .ld.likes li{color:var(--white)}
+  .ld .note{margin-top:1.2rem;font-size:.8rem;color:var(--fog2);font-style:italic;line-height:1.6}
+
+  .prose h3{font-family:var(--serif);font-weight:700;font-size:1.5rem;margin-bottom:1.1rem;letter-spacing:-.01em;margin-top:2rem}
+  .prose p{color:var(--fog);margin-bottom:1.1rem;font-size:.98rem}
+  .prose p strong{color:var(--white);font-weight:500}
+  .wine-word{color:var(--wine);font-weight:500}
+
+  .card{border:1px solid var(--line);background:var(--char);padding:2.2rem;margin-bottom:1.5rem;position:relative}
+  .card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--wine);opacity:0;transition:opacity .4s}
+  .card:hover::before{opacity:1}
+  .card .ctitle{font-family:var(--serif);font-weight:700;font-size:1.4rem;margin-bottom:.4rem}
+  .card .csub{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;color:var(--wine);text-transform:uppercase;margin-bottom:1.2rem}
+  .card p{color:var(--fog);font-size:.95rem;margin-bottom:.8rem}
+  .card ul{list-style:none;margin-top:1rem}
+  .card li{color:var(--fog);font-size:.92rem;padding:.45rem 0 .45rem 1.3rem;position:relative;border-top:1px solid var(--line)}
+  .card li:first-child{border-top:none}
+  .card li::before{content:'—';position:absolute;left:0;color:var(--wine)}
+  .card li b{color:var(--white);font-weight:500}
+  .stamp{margin-top:1.6rem;font-family:var(--mono);font-size:.72rem;letter-spacing:.18em;color:var(--fog2);text-align:center;text-transform:uppercase}
+  .stamp .w{color:var(--wine)}
+
+  .npc{margin-top:3rem;border:1px dashed var(--line);background:linear-gradient(180deg,var(--char),var(--ink));padding:2.2rem}
+  .npc-head{display:flex;align-items:baseline;gap:1rem;margin-bottom:1.4rem;flex-wrap:wrap}
+  .npc-head .nlabel{font-family:var(--mono);font-size:.62rem;letter-spacing:.24em;color:var(--fog2);text-transform:uppercase;border:1px solid var(--line);padding:.2rem .55rem}
+  .npc-head .nname{font-family:var(--serif);font-weight:700;font-size:1.7rem}
+  .npc-head .nname .han{color:var(--fog);font-size:.5em;font-weight:400;margin-left:.4rem}
+  .npc-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+  .npc-info .cell{background:var(--char);padding:.9rem 1.1rem}
+  .npc-info .k{font-family:var(--mono);font-size:.6rem;letter-spacing:.18em;color:var(--fog2);text-transform:uppercase}
+  .npc-info .v{font-size:.92rem;color:var(--white);margin-top:.25rem}
+  .npc-desc{margin-top:1.6rem;color:var(--fog);font-size:.95rem;line-height:1.85}
+
+  .gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-top:.5rem}
+  .gal-group{margin-bottom:3.5rem}
+  .gal-head{font-family:var(--serif);font-weight:800;font-size:1.7rem;letter-spacing:-.01em;padding-bottom:.9rem;border-bottom:1px solid var(--line);margin-bottom:.3rem;display:flex;align-items:baseline;gap:.8rem}
+  .gal-head.wine{color:var(--wine)}
+  .gal-head .ghan{font-family:var(--mono);font-size:.62rem;font-weight:400;letter-spacing:.22em;color:var(--fog2)}
+  .gal-sub{margin-top:1.8rem}
+  .gal-subhead{font-family:var(--mono);font-size:.74rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--white);margin-bottom:.3rem;display:flex;align-items:baseline;gap:.7rem}
+  .gal-subhead::before{content:'◦';color:var(--wine)}
+  .gal-subhead .ghan{font-size:.6rem;letter-spacing:.18em;color:var(--fog2)}
+  .gcell{position:relative;aspect-ratio:3/4;background:linear-gradient(160deg,var(--char2),var(--char));border:1px solid var(--line);overflow:hidden;cursor:pointer;transition:border-color .35s}
+  .gcell:hover{border-color:var(--wine)}
+  .gcell::after{content:attr(data-ph);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:.62rem;letter-spacing:.25em;color:var(--fog2)}
+  .gcell img{width:100%;height:100%;object-fit:cover;position:relative;z-index:2;display:block;transition:transform .6s}
+  .gcell:hover img{transform:scale(1.04)}
+
+  .lb{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(8,8,10,.94);backdrop-filter:blur(6px);padding:2rem;cursor:zoom-out}
+  .lb.open{display:flex}
+  .lb img{max-width:90vw;max-height:88vh;border:1px solid var(--line);object-fit:contain}
+  .lb .lb-close{position:absolute;top:1.5rem;right:1.8rem;color:var(--fog);font-family:var(--mono);font-size:.8rem;letter-spacing:.2em;cursor:pointer}
+  .lb .lb-close:hover{color:var(--wine)}
+
+  footer{border-top:1px solid var(--line);text-align:center;padding:3rem 2rem 4rem;font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;color:var(--fog2);text-transform:uppercase}
+  footer .wine-word{color:var(--wine)}
+
+  @media(max-width:760px){
+    .char-hero{grid-template-columns:1fr;gap:2rem}
+    .portrait{max-width:300px}
+    .duality-grid{grid-template-columns:1fr}.divider-v{display:none}
+    .ld-grid{grid-template-columns:1fr}
+    nav button{padding:1rem .9rem;font-size:.64rem}
+    main{padding:0 1.4rem}.page{padding:6.5rem 0 4rem}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <button data-tab="character" class="active">Character</button>
+  <button data-tab="world">World</button>
+  <button data-tab="gallery">Gallery</button>
+</nav>
+
+<main>
+
+<section class="page active" id="character">
+  <div class="char-hero">
+    <div class="portrait">
+      <span class="frame-tag">CHA JAEHYUK</span>
+      <img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/P.png" alt="차재혁">
+    </div>
+    <div class="char-id">
+      <div class="eyebrow">Main Character</div>
+      <span class="char-name">차재혁<span class="han"> CHA JAEHYUK</span></span>
+
+      <div class="id-line">
+        <div class="bar"></div>
+        <div class="info">
+          <span>42세<span class="u">AGE</span></span>
+          <span>187cm<span class="u">HEIGHT</span></span>
+          <span>아르테온 인사총무팀 부장<span class="u">ARTEON · HR/GA</span></span>
+        </div>
+      </div>
+
+      <div class="stat-grid">
+        <div class="stat"><div class="k">MBTI</div><div class="v">ESTJ</div></div>
+        <div class="stat"><div class="k">Enneagram</div><div class="v">8w9 · sp/so · 835</div></div>
+      </div>
+
+      <div class="tags">
+        <span class="tag w">순애</span>
+        <span class="tag">유부남</span>
+        <span class="tag">통제형</span>
+        <span class="tag">Soft Dom</span>
+        <span class="tag w">집착</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="eyebrow">Personality</div>
+    <div class="big-label">성격<span class="sub">이분법적 세계관</span></div>
+    <div class="duality-grid">
+      <div class="duality-col sanctuary">
+        <h4>성역 / Sanctuary</h4>
+        <p>통제하지 않는다. 자신을 굽혀 맞춘다. 강력한 후광 필터가 씌워져, 상대의 모든 것이 과하게 사랑스럽고 기특하게 보인다. 실수는 상황 탓, 성공은 상대 덕으로 돌린다.</p>
+      </div>
+      <div class="divider-v"></div>
+      <div class="duality-col void">
+        <h4>무가치 / Void</h4>
+        <p>오직 실적과 효율로 판단한다. 경멸과 조롱, 비인격적 통제. 단점만 보이는 시선. 성역에서 받은 스트레스를 이쪽으로 전치한다. 같은 입에서 나온 말이라고 믿기 어려울 만큼 차갑다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <div class="eyebrow">Taste</div>
+    <div class="ld-grid">
+      <div class="ld likes">
+        <h4>Likes</h4>
+        <ul>
+          <li>정갈한 고급 한정식</li>
+          <li>핸드드립 싱글 오리진 커피</li>
+          <li>싱글 몰트 위스키 · 위스키 수집</li>
+          <li>이른 새벽, 비 오기 직전의 공기</li>
+          <li>혼자 하는 정적인 운동 · 정돈된 서재</li>
+          <li>예측 가능한 질서, 정제된 고요함</li>
+        </ul>
+      </div>
+      <div class="ld dislikes">
+        <h4>Dislikes</h4>
+        <ul>
+          <li>지나치게 달거나 자극적인 것</li>
+          <li>싸구려 · 조악한 것</li>
+          <li>소란스러운 회식 자리</li>
+          <li>통제 불가능한 변수, 흐트러진 것</li>
+          <li>약속에 늦는 사람</li>
+          <li>늘어지는 한낮, 습하고 무더운 날</li>
+        </ul>
+        <p class="note">단, 성역 안의 사람에게는 이 모든 호불호가 무의미해진다.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="block prose">
+    <div class="eyebrow">Background</div>
+    <div class="big-label" style="margin-bottom:1.4rem">배경</div>
+    <p>분 단위로 짜인 일상을 사는 남자. 흐트러진 것을 못 견딘다. 잘 재단된 슈트, 핸드드립 커피, 집 한쪽을 채운 <span class="wine-word">위스키 장식장</span>이 유일하게 시간을 들이는 사적인 세계다.</p>
+    <p>아르테온 인사총무팀 부장. 회사의 성과주의를 집행하는 핵심 권력. 무가치로 분류된 이들에게는 더없이 냉정하지만, 단 한 사람, 아내 <strong>이하연</strong>에게만은 다른 사람이 된다.</p>
+    <p>그녀를 오랫동안 최상위 성역에 두고, 의부증과 히스테리를 군말 없이 견뎌 왔다. 사내에선 소문난 애처가다. 하지만 그 견딤이 <span class="wine-word">사랑이었는지 책임이었는지</span>, 본인조차 오래 들여다본 적 없다. 각 잡힌 표면 아래 무엇이 쌓여 있는지, 그 자신도 모른 채 살아간다.</p>
+  </div>
+</section>
+
+<section class="page" id="world">
+  <div class="eyebrow">Worldview</div>
+  <h2 class="sec-title">세계관</h2>
+  <div class="sec-sub">Arteon &amp; Cupid's Misfire</div>
+
+  <div class="card">
+    <div class="ctitle">기업 아르테온</div>
+    <div class="csub">ARTEON · IT Solution &amp; Consulting</div>
+    <p>표면적으로는 자율·수평·창의를 존중하는 회사. 실질은 극심한 성과주의. 그 성과주의를 유지하고 집행하는 핵심 권력이 인사총무팀이다.</p>
+    <ul>
+      <li><b>HR 파트</b> : 채용 · 평가 · 보상 · 저성과자 관리</li>
+      <li><b>GA 파트</b> : 자산 관리 · 비품 · 행사 기획 · 의전</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="ctitle">사랑의 묘약 · 큐피드의 오판</div>
+    <div class="csub">Cupid's Misfire</div>
+    <p>다크웹과 SNS 뒤편에서 암암리에 거래되는 약. 저렴한 검은 소포 상자, 검은 종이 충전재 속의 스틱 하나. 무색무취. 투여자의 타액에 섞어 대상에게 먹이면 효과는 즉시 발현된다.</p>
+    <p>새 인격을 만들지 않는다. 성격도 가치관도 그대로다. 단 하나, 복용자의 ‘최상위 성역’만 투여자로 강제로 덮어쓴다. 그리고 원래 성역에게 보이던 처우가 극단으로 치닫는다.</p>
+    <div class="stamp">※ <span class="w">제조사 증발</span> ※</div>
+  </div>
+
+  <div class="npc">
+    <div class="npc-head">
+      <span class="nlabel">NPC</span>
+      <span class="nname">이하연<span class="han">LEE HAYEON</span></span>
+    </div>
+    <div class="npc-info">
+      <div class="cell"><div class="k">Age</div><div class="v">45세</div></div>
+      <div class="cell"><div class="k">Height</div><div class="v">164cm</div></div>
+      <div class="cell"><div class="k">Relation</div><div class="v">차재혁의 아내</div></div>
+      <div class="cell"><div class="k">Job</div><div class="v">가정주부</div></div>
+      <div class="cell"><div class="k">MBTI</div><div class="v">INFP</div></div>
+      <div class="cell"><div class="k">Enneagram</div><div class="v">6w7 · sp/sx · 649</div></div>
+    </div>
+    <p class="npc-desc">차재혁의 아내. 여리고 의존적이지만, 불안이 차오르면 누구보다 집요하고 날카로워진다. 지독한 의부증을 앓고 있어 남편의 위치와 일정이 불확실한 상태를 견디지 못한다. 최소 한 시간 간격으로 확인 전화를 걸고, 받지 않으면 받을 때까지 멈추지 않는다. 낯선 흔적이나 달라진 태도를 감지하면 의심이 폭발한다.</p>
+  </div>
+</section>
+
+<section class="page" id="gallery">
+  <div class="eyebrow">Gallery</div>
+  <h2 class="sec-title">이미지 모음</h2>
+  <div class="sec-sub">Image Collection</div>
+
+  <div class="gal-group">
+    <h3 class="gal-head">감정<span class="ghan">EMOTION</span></h3>
+    <div class="gallery-grid">
+      <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/c1.png" alt="감정 1"></div>
+      <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/c2.png" alt="감정 2"></div>
+      <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/c3.png" alt="감정 3"></div>
+      <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/c4.png" alt="감정 4"></div>
+      <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/c5.png" alt="감정 5"></div>
+      <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/c6.png" alt="감정 6"></div>
+      <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/c7.png" alt="감정 7"></div>
+      <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/c8.png" alt="감정 8"></div>
+      <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/c9.png" alt="감정 9"></div>
+      <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/c10.png" alt="감정 10"></div>
+      <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/c11.png" alt="감정 11"></div>
+    </div>
+  </div>
+
+  <div class="gal-group">
+    <h3 class="gal-head wine">H씬<span class="ghan">NSFW</span></h3>
+
+    <div class="gal-sub">
+      <h4 class="gal-subhead">공통<span class="ghan">COMMON</span></h4>
+      <div class="gallery-grid">
+        <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/h1.png" alt="공통 1"></div>
+        <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/h2.png" alt="공통 2"></div>
+        <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/h3.png" alt="공통 3"></div>
+        <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/h4.png" alt="공통 4"></div>
+        <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/h5.png" alt="공통 5"></div>
+        <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/h6.png" alt="공통 6"></div>
+      </div>
+    </div>
+
+    <div class="gal-sub">
+      <h4 class="gal-subhead">HL<span class="ghan">HETERO</span></h4>
+      <div class="gallery-grid">
+        <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/hh1.png" alt="HL 1"></div>
+        <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/hh2.png" alt="HL 2"></div>
+        <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/hh3.png" alt="HL 3"></div>
+        <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/hh4.png" alt="HL 4"></div>
+      </div>
+    </div>
+
+    <div class="gal-sub">
+      <h4 class="gal-subhead">BL<span class="ghan">BOYS LOVE</span></h4>
+      <div class="gallery-grid">
+        <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/hb1.png" alt="BL 1"></div>
+        <div class="gcell"><img src="https://raw.githubusercontent.com/Yam-Y-c/CC/refs/heads/main/hb2.png" alt="BL 2"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="lb" id="lb"><span class="lb-close">CLOSE ✕</span><img src="" alt=""></div>
+
+<footer>부장님, <span class="wine-word">이거 불륜이에요</span></footer>
+
+<script>
+  const btns=[...document.querySelectorAll('nav button')];
+  const pages=[...document.querySelectorAll('.page')];
+  btns.forEach(b=>b.addEventListener('click',()=>{
+    const t=b.dataset.tab;
+    btns.forEach(x=>x.classList.toggle('active',x===b));
+    pages.forEach(p=>p.classList.toggle('active',p.id===t));
+    window.scrollTo({top:0,behavior:'instant'});
+  }));
+  const lb=document.getElementById('lb');
+  const lbImg=lb.querySelector('img');
+  document.querySelectorAll('.gcell').forEach(cell=>{
+    cell.addEventListener('click',()=>{
+      const img=cell.querySelector('img');
+      if(!img)return;
+      lbImg.src=img.src;lbImg.alt=img.alt||'';
+      lb.classList.add('open');
+    });
+  });
+  lb.addEventListener('click',()=>lb.classList.remove('open'));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('open')});
+</script>
+</body>
+</html>
