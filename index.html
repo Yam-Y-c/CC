@@ -134,8 +134,17 @@
   .lb{position:fixed;inset:0;z-index:200;display:none;align-items:center;justify-content:center;background:rgba(8,8,10,.94);backdrop-filter:blur(6px);padding:2rem;cursor:zoom-out}
   .lb.open{display:flex}
   .lb img{max-width:90vw;max-height:88vh;border:1px solid var(--line);object-fit:contain}
-  .lb .lb-close{position:absolute;top:1.5rem;right:1.8rem;color:var(--fog);font-family:var(--mono);font-size:.8rem;letter-spacing:.2em;cursor:pointer}
+  .lb .lb-close{position:absolute;top:1.5rem;right:1.8rem;color:var(--fog);font-family:var(--mono);font-size:.8rem;letter-spacing:.2em;cursor:pointer;z-index:3}
   .lb .lb-close:hover{color:var(--wine)}
+  .lb .lb-nav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;background:rgba(13,13,15,.5);border:1px solid var(--line);color:var(--white);font-size:1.8rem;line-height:1;width:3rem;height:3.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;font-family:var(--serif)}
+  .lb .lb-nav:hover{background:var(--wine);border-color:var(--wine)}
+  .lb .lb-prev{left:1.5rem}
+  .lb .lb-next{right:1.5rem}
+  .lb .lb-count{position:absolute;bottom:1.6rem;left:50%;transform:translateX(-50%);z-index:3;font-family:var(--mono);font-size:.7rem;letter-spacing:.2em;color:var(--fog)}
+  @media(max-width:760px){
+    .lb .lb-nav{width:2.4rem;height:3rem;font-size:1.4rem}
+    .lb .lb-prev{left:.6rem}.lb .lb-next{right:.6rem}
+  }
 
   footer{border-top:1px solid var(--line);text-align:center;padding:3rem 2rem 4rem;font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;color:var(--fog2);text-transform:uppercase}
   footer .wine-word{color:var(--wine)}
@@ -347,7 +356,13 @@
 
 </main>
 
-<div class="lb" id="lb"><span class="lb-close">CLOSE ✕</span><img src="" alt=""></div>
+<div class="lb" id="lb">
+  <span class="lb-close">CLOSE ✕</span>
+  <button class="lb-nav lb-prev" aria-label="이전">‹</button>
+  <img src="" alt="">
+  <button class="lb-nav lb-next" aria-label="다음">›</button>
+  <span class="lb-count"></span>
+</div>
 
 <footer>부장님, <span class="wine-word">이거 불륜이에요</span></footer>
 
@@ -362,16 +377,58 @@
   }));
   const lb=document.getElementById('lb');
   const lbImg=lb.querySelector('img');
+  const lbCount=lb.querySelector('.lb-count');
+  const lbPrev=lb.querySelector('.lb-prev');
+  const lbNext=lb.querySelector('.lb-next');
+  let curList=[];   // 현재 그룹의 이미지 src 목록
+  let curIdx=0;
+
+  function showAt(i){
+    if(!curList.length)return;
+    curIdx=(i+curList.length)%curList.length;
+    const item=curList[curIdx];
+    lbImg.src=item.src;lbImg.alt=item.alt;
+    lbCount.textContent=(curIdx+1)+' / '+curList.length;
+    const multi=curList.length>1;
+    lbPrev.style.display=multi?'flex':'none';
+    lbNext.style.display=multi?'flex':'none';
+  }
+
   document.querySelectorAll('.gcell').forEach(cell=>{
     cell.addEventListener('click',()=>{
       const img=cell.querySelector('img');
       if(!img)return;
-      lbImg.src=img.src;lbImg.alt=img.alt||'';
+      // 같은 갤러리 그룹(.gallery-grid) 안의 이미지들만 목록으로
+      const grid=cell.closest('.gallery-grid');
+      const cells=[...grid.querySelectorAll('.gcell img')];
+      curList=cells.map(im=>({src:im.src,alt:im.alt||''}));
+      curIdx=cells.indexOf(img);
+      showAt(curIdx);
       lb.classList.add('open');
     });
   });
+
+  lbPrev.addEventListener('click',e=>{e.stopPropagation();showAt(curIdx-1)});
+  lbNext.addEventListener('click',e=>{e.stopPropagation();showAt(curIdx+1)});
+  lbImg.addEventListener('click',e=>e.stopPropagation()); // 이미지 클릭은 닫힘 방지
   lb.addEventListener('click',()=>lb.classList.remove('open'));
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')lb.classList.remove('open')});
+
+  document.addEventListener('keydown',e=>{
+    if(!lb.classList.contains('open'))return;
+    if(e.key==='Escape')lb.classList.remove('open');
+    if(e.key==='ArrowLeft')showAt(curIdx-1);
+    if(e.key==='ArrowRight')showAt(curIdx+1);
+  });
+
+  // 모바일 스와이프
+  let touchX=null;
+  lb.addEventListener('touchstart',e=>{touchX=e.changedTouches[0].clientX},{passive:true});
+  lb.addEventListener('touchend',e=>{
+    if(touchX===null)return;
+    const dx=e.changedTouches[0].clientX-touchX;
+    if(Math.abs(dx)>50)showAt(curIdx+(dx<0?1:-1));
+    touchX=null;
+  },{passive:true});
 </script>
 </body>
 </html>
